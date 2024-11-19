@@ -226,7 +226,6 @@
       const circle = document.getElementById(option);
       if (circle) {
         circle.setAttribute("r", 7); // Връщане към нормален радиус
-        circle.setAttribute("fill", "red");
       }
     });
 
@@ -302,7 +301,6 @@
       const circle = document.getElementById(point.id);
       if (circle) {
         circle.setAttribute("r", 7); // Начален радиус
-        circle.setAttribute("fill", "red");
         circle.style.cursor = "pointer"; // Настройка на курсора на pointer
       }
       console.log(`Точката ${pointId} е скрита, защото няма пулове.`);
