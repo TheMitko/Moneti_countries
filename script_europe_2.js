@@ -226,6 +226,7 @@
       const circle = document.getElementById(option);
       if (circle) {
         circle.setAttribute("r", 7); // Връщане към нормален радиус
+        circle.setAttribute("fill", pawnsOnPoints[pointId].owner === 1 ? players[1].color : players[2].color);
       }
     });
 
@@ -301,6 +302,7 @@
       const circle = document.getElementById(point.id);
       if (circle) {
         circle.setAttribute("r", 7); // Начален радиус
+        circle.setAttribute("fill", pawnsOnPoints[pointId].owner === 1 ? players[1].color : players[2].color);
         circle.style.cursor = "pointer"; // Настройка на курсора на pointer
       }
       console.log(`Точката ${pointId} е скрита, защото няма пулове.`);
@@ -369,4 +371,3 @@
 
   // Инициализиране на играта
   renderMapElements();
-
