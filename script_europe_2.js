@@ -84,7 +84,6 @@ function placePawns(pointId) {
   const owner = checkCountryOwnership(point);
 
   if (owner !== currentPlayer) {
-    alert("Можете да разположите пуловете си само в свои територии.");
     return;
   }
 
@@ -330,7 +329,6 @@ function renderMapElements() {
     pointsGroup.appendChild(circle);
 
     pawnsOnPoints[point.id] = { pawns: 0, owner: null };
-
   });
 
   pointsData.forEach(point => {
