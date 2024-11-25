@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function() {
         1: [],
         2: []
     };
+    const maxCountries = 8; // Maximum countries to be chosen
+    const allCountries = Array.from(countryButtons).map(button => button.getAttribute("data-country"));
 
     function updateCurrentPlayer() {
         currentPlayerDiv.textContent = `Ред на играч ${currentPlayer} да избере държава`;
@@ -22,14 +24,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
             currentPlayer = currentPlayer === 1 ? 2 : 1;
             updateCurrentPlayer();
-            
-            // Проверка дали всички държави са избрани
-            if (playersCountries[1].length + playersCountries[2].length === countryButtons.length) {
+
+            // Check if 8 countries have been selected
+            if (playersCountries[1].length + playersCountries[2].length === maxCountries) {
+                // Determine the international country
+                const selectedCountries = playersCountries[1].concat(playersCountries[2]);
+                const internationalCountry = allCountries.find(c => !selectedCountries.includes(c));
+                
+                // Disable the international country button and mark it as international
+                const internationalButton = document.querySelector(`.country-btn[data-country="${internationalCountry}"]`);
+                internationalButton.disabled = true;
+                internationalButton.classList.add("international");
+
                 localStorage.setItem("playersCountries", JSON.stringify(playersCountries));
                 alert("Всички държави са избрани!");
-                // Navigate to a new page
-                window.location.href = "game_europe_2.html";
 
+                // Navigate to the game page
+                window.location.href = "game_europe_2.html";
             }
         });
     });
