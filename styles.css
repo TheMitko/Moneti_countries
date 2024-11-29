@@ -153,3 +153,36 @@ svg {
 {
     font-size: 30px;
 }
+.pawns-count {
+    position: relative;
+    
+    font-size: 10px;
+    background: linear-gradient(to bottom, #00FF40, #05718c);
+    border: 2px solid #ccc; /* Лека рамка за акцент */
+    border-radius: 10px; /* Овални ъгли за модерен вид */
+    padding: 10px 20px; /* Вътрешни отстояния за простор */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Мек сянка за дълбочина */
+    color: #333; /* Тъмен текст за четимост */
+}
+
+.pawns-count p {
+    margin: 10px 0; /* Пространство между параграфите */
+    font-weight: bold; /* Изтънен текст */
+    font-size: 21.5px; /* По-голям шрифт за по-ясен изглед */
+}
+
+.player1-pawns
+{
+    color: #3457D5;
+}
+.player2-pawns
+{
+    color: #0e7545;
+}
+.location
+{
+    position: absolute;
+    top: 28%;
+    left: 1%;
+}
+
