@@ -1,5 +1,8 @@
 const playersCountries = JSON.parse(localStorage.getItem("playersCountries")) || { 1: [], 2: [] };
 const gameData = JSON.parse(localStorage.getItem("gameData")) || { pawnsCount: 3 }; 
+// Променлива за следене на броя пулове на всеки играч
+const maxPawnsPerPlayer = gameData.pawnsCount;
+const playerPawnsCount = { 1: maxPawnsPerPlayer, 2: maxPawnsPerPlayer };
 let selectedStartPoint = null;
 let isMovingPhase = false; // Следене на фазата на преместване
 let currentPlayer = 1; // Следене на текущия играч
@@ -8,9 +11,10 @@ let X = false; // Променлива, указваща дали е необх�
 let Y = false; // Променлива, указваща дали е направен изборът за кацане
 
 const players = { 
-  1: { color: "blue", remainingPawns: gameData.pawnsCount, countries: playersCountries[1] },
-  2: { color: "green", remainingPawns: gameData.pawnsCount, countries: playersCountries[2] }
+  1: { color: "blue", remainingPawnsToMove: gameData.pawnsCount, remainingPawns: gameData.pawnsCount, countries: playersCountries[1] },
+  2: { color: "green",remainingPawnsToMove: gameData.pawnsCount, remainingPawns: gameData.pawnsCount, countries: playersCountries[2] }
 };
+
 
 // Прави връзките двупосочни
 function makeConnectionsBidirectional(points) {
@@ -26,6 +30,12 @@ function makeConnectionsBidirectional(points) {
     });
   });
 }
+
+function updatePlayerPawnsCount() {
+  document.getElementById("player1-pawns").textContent = playerPawnsCount[1];
+  document.getElementById("player2-pawns").textContent = playerPawnsCount[2];
+}
+
 
 // Стартиране на функцията за осигуряване на двупосочни връзки
 makeConnectionsBidirectional(pointsData);
@@ -79,47 +89,59 @@ function selectPoint(pointId) {
 
 // Функция за разпределяне на пуловете върху кликната точка
 function placePawns(pointId) {
-  const player = players[currentPlayer];
   const point = pointsData.find(p => p.id === pointId);
-  const owner = checkCountryOwnership(point);
+  if (!point) {
+    alert("Невалидна точка.");
+    return;
+  }
 
-  if (owner !== currentPlayer) {
+  const pointColor = document.getElementById(pointId)?.getAttribute("fill"); // Вземане на цвета на точката
+  let player = null;
+
+  // Определяне на играча на базата на цвета
+  if (pointColor === "blue") {
+    player = players[1];
+  } else if (pointColor === "green") {
+    player = players[2];
+  } else {
+    alert("Тази точка не принадлежи на никого.");
     return;
   }
 
   if (player.remainingPawns <= 0) {
-    alert("Не ви остават повече пулове");
+    alert(`Играч ${player === players[1] ? 1 : 2} няма оставащи пулове.`);
     return;
   }
 
   const maxPawnsToPlace = player.remainingPawns;
-  const numPawns = parseInt(prompt(`Колко пула искате да поставите? (Max: ${maxPawnsToPlace})`), 10);
+  const numPawns = parseInt(prompt(`Колко пулове искате да поставите? (Max: ${maxPawnsToPlace})`), 10);
 
   if (isNaN(numPawns) || numPawns <= 0 || numPawns > maxPawnsToPlace) {
     alert("Невалиден брой пулове. Опитайте отново.");
     return;
   }
 
-  // Инициализиране на точката, ако е първото поставяне на пулове там
+  // Инициализиране на точката, ако за първи път се поставят пулове там
   if (!pawnsOnPoints[pointId]) {
     pawnsOnPoints[pointId] = { pawns: 0, owner: null };
   }
 
   pawnsOnPoints[pointId].pawns += numPawns;
   player.remainingPawns -= numPawns;
-  pawnsOnPoints[pointId].owner = currentPlayer;
+  updatePlayerPawnsCount();
+  pawnsOnPoints[pointId].owner = player === players[1] ? 1 : 2;
 
   updatePointDisplay(pointId);
 
-  // Превключване на редовете между играчите
+  // Проверка дали и двамата играчи са изчерпали пуловете си
   if (players[1].remainingPawns === 0 && players[2].remainingPawns === 0) {
     alert("Разполагането на пулове приключи! Вече можете да ги местите!");
     isMovingPhase = true;
-  } else {
-    currentPlayer = currentPlayer === 1 ? 2 : 1;
-    alert(`Сега е ред на играч ${currentPlayer}`);
   }
 }
+
+
+
 
 // Функция за преместване на пулове между точки
 function movePawns(startPointId, destinationPointId) {
@@ -168,7 +190,10 @@ function movePawns(startPointId, destinationPointId) {
         highlightCaptureOption(option);
       });
 
-      // Премахване на противниковите пулове
+      // Премахване на противниковите пулове и актуализиране на броя пулове на опонента
+      const opponent = pawnsOnPoints[destinationPointId].owner;
+      playerPawnsCount[opponent] -= pawnsOnPoints[destinationPointId].pawns;
+      updatePlayerPawnsCount();
       pawnsOnPoints[destinationPointId] = { pawns: 0, owner: null };
       console.log(`Пулове на точка ${destinationPointId} бяха изтрити, защото бяха прескочени.`);
       updatePointDisplay(destinationPointId);
@@ -196,24 +221,12 @@ function movePawns(startPointId, destinationPointId) {
   updatePointDisplay(startPointId);
   updatePointDisplay(destinationPointId);
 
-  // Проверка за победа
-  const allPoints = Object.values(pawnsOnPoints);
-  const allBlue = allPoints.every(point => point.owner === 1);
-  const allGreen = allPoints.every(point => point.owner === 2);
-
-  if (allBlue) {
-    alert("Играч 1 печели играта!");
-    return;
-  } else if (allGreen) {
-    alert("Играч 2 печели играта!");
-    return;
-  }
-
   // Превключване на редовете между играчите
   if (!X || (X && Y)) {
     switchTurn();
   }
 }
+
 
 // Функция за обработка на избора на точка за кацане при улавяне
 function handleCaptureChoice(pointId) {
@@ -371,3 +384,4 @@ function switchTurn() {
 
 // Инициализиране на играта
 renderMapElements();
+updatePlayerPawnsCount();
