@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const currentPlayerDiv = document.getElementById("current-player");
     const countryButtons = document.querySelectorAll(".country-btn");
 
+    // Зареждане на запазените данни за играта
+    const gameData = JSON.parse(localStorage.getItem("gameData"));
+    const playerNames = gameData.playerNames || [];
+
     let currentPlayer = 1;
     const playersCountries = {
         1: [],
@@ -12,7 +16,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const allCountries = Array.from(countryButtons).map(button => button.getAttribute("data-country"));
 
     function updateCurrentPlayer() {
-        currentPlayerDiv.textContent = `Ред на играч ${currentPlayer} да избере държава`;
+        const playerName = playerNames[currentPlayer - 1] || `играч ${currentPlayer}`;
+        currentPlayerDiv.textContent = `Ред на ${playerName} да избере държава`;
     }
 
     countryButtons.forEach(button => {
