@@ -1,8 +1,11 @@
 const playersCountries = JSON.parse(localStorage.getItem("playersCountries")) || { 1: [], 2: [] };
-const gameData = JSON.parse(localStorage.getItem("gameData")) || { pawnsCount: 3 }; 
+const gameData = JSON.parse(localStorage.getItem("gameData")) || { pawnsCount: 3, playerNames: [] };
+const playerNames = gameData.playerNames;
+
 // Променлива за следене на броя пулове на всеки играч
 const maxPawnsPerPlayer = gameData.pawnsCount;
 const playerPawnsCount = { 1: maxPawnsPerPlayer, 2: maxPawnsPerPlayer };
+
 let selectedStartPoint = null;
 let isMovingPhase = false; // Следене на фазата на преместване
 let currentPlayer = 1; // Следене на текущия играч
@@ -12,9 +15,8 @@ let Y = false; // Променлива, указваща дали е напра�
 
 const players = { 
   1: { color: "blue", remainingPawnsToMove: gameData.pawnsCount, remainingPawns: gameData.pawnsCount, countries: playersCountries[1] },
-  2: { color: "green",remainingPawnsToMove: gameData.pawnsCount, remainingPawns: gameData.pawnsCount, countries: playersCountries[2] }
+  2: { color: "green", remainingPawnsToMove: gameData.pawnsCount, remainingPawns: gameData.pawnsCount, countries: playersCountries[2] }
 };
-
 
 // Прави връзките двупосочни
 function makeConnectionsBidirectional(points) {
@@ -32,10 +34,26 @@ function makeConnectionsBidirectional(points) {
 }
 
 function updatePlayerPawnsCount() {
-  document.getElementById("player1-pawns").textContent = playerPawnsCount[1];
-  document.getElementById("player2-pawns").textContent = playerPawnsCount[2];
+  document.querySelector(".player1-pawns").textContent = playerPawnsCount[1];
+  document.querySelector(".player2-pawns").textContent = playerPawnsCount[2];
 }
 
+  // Обновяване на текста в таблото с имената на играчите
+  function updatePlayerInfoDisplay() {
+      document.getElementById("player1-info").innerHTML = `${playerNames[0] || 'Играч 1'}: <span id="player1-pawns" class="player1-pawns">0</span> пулове`;
+      document.getElementById("player2-info").innerHTML = `${playerNames[1] || 'Играч 2'}: <span id="player2-pawns" class="player2-pawns">0</span> пулове`;
+  }
+
+  updatePlayerInfoDisplay(); // Извикване на функцията за първоначално обновяване на дисплея
+
+
+
+// Останалата част от кода ви (части 1-4 от предишното ми съобщение)
+
+
+function getCurrentPlayerName() {
+  return playerNames[currentPlayer - 1] || `играч ${currentPlayer}`;
+}
 
 // Стартиране на функцията за осигуряване на двупосочни връзки
 makeConnectionsBidirectional(pointsData);
@@ -59,7 +77,6 @@ function checkCountryOwnership(point) {
   }
   return null; // No player owns this point's country
 }
-
 // Обработчик на събития за избиране на точка
 function selectPoint(pointId) {
   if (captureOptions.length > 0) {
@@ -108,8 +125,10 @@ function placePawns(pointId) {
     return;
   }
 
+  const playerName = playerNames[player === players[1] ? 0 : 1] || `Играч ${player === players[1] ? 1 : 2}`;
+
   if (player.remainingPawns <= 0) {
-    alert(`Играч ${player === players[1] ? 1 : 2} няма оставащи пулове.`);
+    alert(`${playerName} няма оставащи пулове.`);
     return;
   }
 
@@ -139,9 +158,6 @@ function placePawns(pointId) {
     isMovingPhase = true;
   }
 }
-
-
-
 
 // Функция за преместване на пулове между точки
 function movePawns(startPointId, destinationPointId) {
@@ -226,8 +242,6 @@ function movePawns(startPointId, destinationPointId) {
     switchTurn();
   }
 }
-
-
 // Функция за обработка на избора на точка за кацане при улавяне
 function handleCaptureChoice(pointId) {
   const validChoice = captureOptions.find(option => option === pointId);
@@ -254,7 +268,7 @@ function handleCaptureChoice(pointId) {
     X = false;
     Y = false; // Нулиране на Y след обработка на улавянето
     currentPlayer = currentPlayer === 1 ? 2 : 1;
-    alert(`Сега е ред на играч ${currentPlayer} да мести пуловете си.`);
+    alert(`Сега е ред на ${getCurrentPlayerName()} да мести пуловете си.`);
   }
 }
 
@@ -364,7 +378,7 @@ function renderMapElements() {
 // Превключване на редовете между играчите
 function switchTurn() {
   currentPlayer = currentPlayer === 1 ? 2 : 1;
-  alert(`Сега е ред на играч ${currentPlayer} да мести пуловете си.`);
+  alert(`Сега е ред на ${getCurrentPlayerName()} да мести пуловете си.`);
   
   // Премахване на текста от всички точки
   Object.keys(pawnsOnPoints).forEach(pointId => {
