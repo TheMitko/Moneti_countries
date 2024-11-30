@@ -1,46 +1,71 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Grab the form elements by their IDs
     const playersCntSelect = document.getElementById('PlayersCnt');
     const mapSelect = document.getElementById('Map');
     const pawnsCountInput = document.getElementById('pawns-count');
-    const saveButton = document.getElementById('saveButton'); // The button that triggers saving
+    const saveButton = document.getElementById('saveButton');
+    const playerNamesContainer = document.getElementById('player-names-container'); 
 
-    // Add a click event listener to the save button
+    // Функция за създаване на секции за имена на играчите
+    function createPlayerNameInputs(numPlayers) {
+        playerNamesContainer.innerHTML = ''; // Изчистване на съдържанието
+        if (numPlayers > 1) {
+            playerNamesContainer.style.display = 'block';
+            for (let i = 1; i <= numPlayers; i++) {
+                const label = document.createElement('label');
+                label.classList.add('PlayerName');
+                label.textContent = `Име на играч ${i}:`;
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.classList.add('PlayerName');
+                input.id = `player-name-${i}`;
+                label.appendChild(input);
+                playerNamesContainer.appendChild(label);
+            }
+        } else {
+            playerNamesContainer.style.display = 'none';
+        }
+    }
+
+    // Слушател за промяна в избрания брой играчи
+    playersCntSelect.addEventListener('change', function () {
+        const numPlayers = parseInt(playersCntSelect.value, 10);
+        createPlayerNameInputs(numPlayers);
+    });
+
     saveButton.addEventListener('click', function (event) {
-        //event.preventDefault(); // Prevent default form behavior (page reload)
+        const playersCount = playersCntSelect.value;
+        const mapSelection = mapSelect.value;
+        const pawnsCount = pawnsCountInput.value;
 
-        // Get the values from the form elements
-        const playersCount = playersCntSelect.value;  // Value from the number of players dropdown
-        const mapSelection = mapSelect.value;         // Value from the map dropdown
-        const pawnsCount = pawnsCountInput.value;     // Value from the number of pawns input field
-
-        // Now you can save the data, display it, or use it as needed
-
-        // For example, display the saved data in the console:
         console.log('Number of Players:', playersCount);
         console.log('Selected Map:', mapSelection);
         console.log('Number of Pawns:', pawnsCount);
 
-        // Optionally, store the data in a JavaScript object or save it for later
         const savedData = {
             playersCount: playersCount,
             mapSelection: mapSelection,
-            pawnsCount: pawnsCount
+            pawnsCount: pawnsCount,
+            playerNames: []
         };
 
-        // You can store the data in localStorage if you want to persist it across page reloads
-        localStorage.setItem('gameData', JSON.stringify(savedData));
+        // Добавяне на имената на играчите в данните
+        if (playersCount > 1) {
+            for (let i = 1; i <= playersCount; i++) {
+                const playerName = document.getElementById(`player-name-${i}`).value;
+                savedData.playerNames.push(playerName);
+            }
+        }
 
-        // Optionally, display a confirmation message or the saved data on the page
+        localStorage.setItem('gameData', JSON.stringify(savedData));
         alert('Всичко е запазено!');
 
-        if (mapSelection === "1" && playersCount === "1") 
-        {
+        if (mapSelection === "1" && playersCount === "1") {
             dynamicLink.href = "game_europe.html";
-        } 
-        else if (mapSelection === "1" && playersCount != "1") 
-        {
+        } else if (mapSelection === "1" && playersCount != "1") {
             dynamicLink.href = "countries_europe.html";
         }
     });
+
+    // Първоначално извикване за създаване на полета за имена на играчи (ако е необходимо)
+    createPlayerNameInputs(parseInt(playersCntSelect.value, 10));
 });
