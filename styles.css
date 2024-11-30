@@ -68,6 +68,7 @@ body {
 .SelectPawns input
 {
     position: relative;
+    size: 10%;
 }
 .Submit
 {
@@ -174,10 +175,28 @@ svg {
 .player1-pawns
 {
     color: #3457D5;
+    text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black,
+        -0.05em -0.05em black,
+        -0.05em 0.05em black,
+        0.05em -0.05em black,
+        0.05em 0.05em black;
 }
 .player2-pawns
 {
     color: #0e7545;
+    text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black,
+        -0.05em -0.05em black,
+        -0.05em 0.05em black,
+        0.05em -0.05em black,
+        0.05em 0.05em black;
 }
 .location
 {
@@ -185,4 +204,50 @@ svg {
     top: 28%;
     left: 1%;
 }
+#player-names-container {
+    position: absolute;
+    top: 31%;
+    right: 13%;
+    width: 200px; /* Ширина на контейнера за имената */
+    background-color: #f4f4f9;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+#player-names-container label {
+    color: black;
+    display: block; /* Подреждане на елементите една под друга */
+    margin-bottom: 10px; /* Пространство между елементите */
+}
+
+#player-names-container input {
+    width: 100%; /* Прави инпутите да заемат цялата ширина на контейнера */
+}
+.player1-names
+{
+    color: #3457D5;
+    text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black,
+        -0.05em -0.05em black,
+        -0.05em 0.05em black,
+        0.05em -0.05em black,
+        0.05em 0.05em black;
+}
+.player2-names
+{
+    color: #0e7545;
+    text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black,
+        -0.05em -0.05em black,
+        -0.05em 0.05em black,
+        0.05em -0.05em black,
+        0.05em 0.05em black;
+}
